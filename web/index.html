@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src https: data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light dark">
+  <title>简视频</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="workspace">
+    <header class="topbar"><div class="mobile-brand"><img class="app-icon" src="assets/app-icon.png" alt="简视频图标">简视频</div><div class="topbar-actions"><button id="refresh-home" class="icon-button" aria-label="刷新首页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 17.9 17"/></svg></button><button id="theme-toggle" class="icon-button" aria-label="切换深浅主题"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg></button></div></header>
+    <main id="main">
+      <section id="page-home" class="page">
+        <div class="platform-tabs" id="home-platforms" aria-label="首页平台"></div>
+        <div id="home-results" class="platform-results"></div>
+      </section>
+      <section id="page-search" class="page" hidden>
+        <div class="page-heading"><h1>搜索</h1></div>
+        <form id="search-form" class="search-box"><span>⌕</span><input id="search-input" maxlength="120" placeholder="搜索电影、电视剧、综艺…" aria-label="搜索关键词" autocomplete="off"><button class="button primary" type="submit">搜索</button></form>
+        <div class="platform-tabs" id="search-platforms" aria-label="搜索平台"></div>
+        <div id="search-results" class="platform-results"><div class="empty-state"><span>⌕</span><h3>下一部好片，从这里开始</h3><p>输入关键词，搜索结果会按平台分别展示。</p></div></div>
+      </section>
+      <section id="page-favorites" class="page" hidden>
+        <div class="page-heading"><h1>收藏</h1></div>
+        <div id="favorite-results" class="video-grid"></div>
+      </section>
+      <section id="page-settings" class="page" hidden>
+        <div class="page-heading"><h1>设置</h1></div>
+        <div class="settings-panel"><h2>外观</h2><div class="setting-row"><div><strong>主题</strong><p>选择你喜欢的观看氛围</p></div><select id="theme-select" aria-label="主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></div></div>
+        <div class="settings-panel"><h2>平台账号</h2><p class="muted">播放前需登录对应平台。会员权益与购买权限由官网决定。</p><div id="accounts"></div></div>
+        <div class="settings-panel"><h2>关于简视频</h2><div class="setting-row"><div><strong>简视频 1.0.21</strong><p id="runtime-info">正在读取运行环境</p></div><span class="count-pill">HTML · CSS · JS</span></div><div class="setting-row"><div><strong>检查更新</strong><p id="update-current">当前版本 1.0.21</p></div><button id="update-check" class="button secondary">检查更新</button></div><p id="update-message" class="muted" role="status" aria-live="polite">手动检查 GitHub 最新正式版本</p><div id="update-download" hidden><label for="update-asset" class="muted">安装包</label><select id="update-asset" aria-label="选择更新安装包"></select><progress id="update-progress" max="1" value="0" aria-label="更新下载进度" hidden></progress><div class="update-actions"><button id="update-download-button" class="button primary">下载更新</button><button id="update-install" class="button primary" hidden>安装更新</button></div></div><p id="drm-info" class="muted"></p><p class="muted">影片信息来自官网公开页面。网站发生变化时，部分内容可能暂时无法读取。</p></div>
+      </section>
+    </main>
+    <section id="browser-panel" hidden>
+      <div class="browser-toolbar"><button id="browser-close" class="button secondary">‹ 返回</button><div class="browser-caption"><strong id="browser-title"></strong><span id="browser-status">官网页面</span></div><button id="browser-back" class="icon-button" aria-label="网页后退">←</button><button id="browser-reload" class="icon-button" aria-label="重新加载官网">↻</button><button id="player-mode" class="button secondary" hidden>官网操作</button><button id="finish-login" class="button primary" hidden>完成登录，继续</button></div>
+      <p id="login-hint" class="login-hint" hidden>请在下方官网完成登录或验证，然后点击“完成登录，继续”。</p>
+      <div id="browser-viewport"></div>
+      <div id="player-controls" hidden>
+        <div class="player-transport"><button id="player-toggle" class="button primary" disabled>播放</button><span id="player-time">00:00 / 00:00</span><button id="player-fullscreen" class="button secondary">全屏</button></div>
+        <input id="player-seek" type="range" min="0" max="1" value="0" step="1" aria-label="播放进度" disabled>
+      </div>
+      <div id="player-information" hidden>
+        <p id="player-message" role="status" aria-live="polite">正在识别官网播放器…</p>
+        <h2 id="player-name"></h2><p id="player-source" class="muted"></p><p id="player-description" class="muted"></p>
+        <div class="player-section-heading"><h3>清晰度</h3><button id="player-quality-read" class="text-button">读取官网选项</button></div>
+        <div id="player-qualities" class="player-options"></div>
+        <section id="player-episode-section">
+          <div class="player-section-heading"><h3>选集</h3></div>
+          <div id="player-episode-groups"></div><div id="player-episodes" class="player-options"></div>
+          <p id="player-episode-status" class="muted" role="status" aria-live="polite"></p>
+          <div class="player-options"><button id="player-episode-more" class="button secondary" hidden></button></div>
+        </section>
+      </div>
+    </section>
+  </div>
+  <nav class="bottom-nav" aria-label="手机主导航">
+    <button data-tab="home" class="selected"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-7v-7h-4v7H3Z" /></svg></span>首页</button>
+    <button data-tab="search"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7" /><path d="m16 16 5 5" /></svg></span>搜索</button>
+    <button data-tab="favorites"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" /></svg></span>收藏</button>
+    <button data-tab="settings"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2h4l.5 3 2 1L19 4.5l2 3.5-2.5 1.5v5L21 16l-2 3.5-2.5-1.5-2 1-.5 3h-4l-.5-3-2-1L5 19.5 3 16l2.5-1.5v-5L3 8l2-3.5L7.5 6l2-1Z" /><circle cx="12" cy="12" r="3" /></svg></span>设置</button>
+  </nav>
+  <dialog id="detail-dialog"><button class="dialog-close icon-button" id="detail-close" aria-label="关闭详情">×</button><div id="detail-content"></div></dialog>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="../shared/platforms.js"></script>
+  <script src="bridge.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "simple-videos",
+  "version": "1.0.21",
+  "private": true,
+  "description": "简视频 · 五平台官方内容聚合",
+  "author": "Simple Videos",
+  "scripts": {
+    "check": "node scripts/check.cjs",
+    "build:android": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1"
+  }
+}
